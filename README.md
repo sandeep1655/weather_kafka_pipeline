@@ -18,16 +18,31 @@ This project demonstrates the **entire lifecycle of a data pipeline** — from i
 
 ---
 
-## 🏗️ System Architecture  
+## System Architecture
 
 ```mermaid
 flowchart TD
-    A[User Input: Flask App] -->|Fetch Weather API| B[OpenWeather API]
-    B -->|Send JSON| C[Kafka Producer]
-    C -->|Push to Topic| D[Kafka Broker]
-    D -->|Consume Messages| E[Kafka Consumer]
-    E -->|Write JSON Files| F[data/bronze/ Folder]
-    F -->|Watchdog + Snowflake Connector| G[Snowflake Stage]
-    G -->|COPY INTO Command| H[Snowflake Weather Table]
-    H -->|Live Connection| I[Power BI Dashboard]
+
+subgraph Local_Docker_Network ["Local Docker Network (Bridge)"]
+    A[Flask App Container] -->|Publishes weather data| B[Kafka Broker Container]
+    B --> C[Kafka Consumer Container]
+    C -->|Writes batched JSON files| D[Local Volume: data/bronze]
+    D -->|Watched by uploader.py| E[Snowflake Cloud Warehouse]
+end
+
+E --> F[Power BI Desktop / Service]
+
+subgraph External_Services ["External APIs"]
+    G[OpenWeather API]
+end
+
+G -->|Fetch city weather data| A
+
+classDef docker fill:#f8f9fa,stroke:#333,stroke-width:1px;
+classDef external fill:#eaf4ff,stroke:#333,stroke-width:1px;
+classDef cloud fill:#f0fff4,stroke:#333,stroke-width:1px;
+class A,B,C,D docker;
+class E cloud;
+class F,G external;
+
 
