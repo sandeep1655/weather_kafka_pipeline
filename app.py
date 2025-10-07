@@ -4,7 +4,7 @@ from kafka import KafkaProducer
 
 app = Flask(__name__)
 
-API_KEY = os.getenv("WEATHER_API_KEY", "66a34553f7e4f4f547f567638f7f2b98")  # replace with your real key
+API_KEY = os.getenv("WEATHER_API_KEY", "your_api_key")  # replace with your real key
 
 # Kafka bootstrap server (works both locally and in Docker)
 KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "kafka:9092")
@@ -41,3 +41,4 @@ def home():
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5001)  # 0.0.0.0 so it works in Docker
+
